@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+    <style>
+        .light-panel {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .light-panel input {
+            width: 80%;
+        }
+        .info {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100vw;
+            height: 100px;
+            background-color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            flex-direction: column;
+        }
+        .status {
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .red {
+            color: red;
+        }
+        .green {
+            color: darkgreen;
+            display: none;
+        }
+
+        .status.found .green {
+            display: unset;
+        }
+
+        .status.found .red {
+            display: none;
+        }
+        .distance-container {
+            display: none;
+        }
+        .distance-container.found {
+            display: unset;
+        }
+
+        .model-selector {
+            position: fixed;
+            bottom: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+
+        }
+
+        .model-selector > button {
+            margin: 0;
+            padding: 10px;
+            background-color: transparent;
+            border: none;
+            border-left: 2px solid rgba(255, 255, 255, 0.9);
+            border-top: 2px solid rgba(255, 255, 255, 0.9);
+            border-bottom: 2px solid rgba(255, 255, 255, 0.9);
+            font-size: large;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .model-selector > button:first-child {
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+        }
+
+        .model-selector > button:last-child {
+            border-top-right-radius: 10px;
+            border-bottom-right-radius: 10px;
+            border-right: 2px solid rgba(255, 255, 255, 0.9);
+        }
+
+        .model-selector > button.selected {
+            background-color: rgba(255, 255, 255, 0.4);;
+        }
+    </style>
+  <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+  <!-- we import arjs version without NFT but with marker + location based support -->
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+  <script>
+         AFRAME.registerComponent('modify-materials', {
+            init: function () {
+                // Wait for model to load.
+                this.el.addEventListener('model-loaded', () => {
+                    // Grab the mesh / scene.
+                    console.log("Object loaded")
+                    const mesh = document.getElementById('object').object3D.children[0].children[0];
+                    let currentColor = 0xffffff;
+                    setInterval(() => {
+                        currentColor = currentColor === 0 ? 0xffffff : currentColor - 0x111111;
+                        mesh.material.color = new THREE.Color(currentColor);
+                    }, 2000);
+                });
+            }
+        });
+  </script>
+  <body style="margin : 0px; overflow: hidden;">
+    <a-scene embedded arjs>
+      <a-marker preset="hiro" size="0.065" emitevents="true">
+        <a-entity light="type: ambient; color: #FFF; intensity: 1">
+        </a-entity>
+        <a-entity
+        id="medialunas"
+        position="0 0 0"
+        scale="3 3 3"
+        gltf-model="/MEDIALUNAS1.gltf"
+        emitevents="true"
+        ></a-entity>
+        <a-entity
+        id="asado"
+        position="0 0 0"
+        scale="2 2 2"
+        gltf-model="/asado.glb"
+        emitevents="true"
+        visible="false"
+        ></a-entity>
+        <a-entity
+        id="ensalada"
+        position="0 0 0"
+        scale="3 3 3"
+        gltf-model="/ensalada.gltf"
+        emitevents="true"
+        visible="false"
+        ></a-entity>
+      </a-marker>
+      <a-entity camera></a-entity>
+    </a-scene>
+
+    <div class="model-selector">
+        <button class="selected" data-model-id="medialunas">Medialunas</button>
+        <button data-model-id="asado">Asado</button>
+        <button data-model-id="ensalada">Ensalada</button>
+    </div>
+    <div class="info">
+        <p>Estado del Marker: <span class="status"><span class="red">No detectado</span><span class="green">detectado</span></span></p>
+        <p class="distance-container">Distancia al Marker: <span class="distance"></span> cm</p>
+    </div>
+    <div class="light-panel">
+        <input type="range" name="light" id="lightRange" min="0" max="15" step="1" value="15">
+    </div>
+    <script>
+        let markerFound = false; 
+        const camera = document.querySelector('[camera]');
+        const marker = document.querySelector('a-marker');
+        let check;
+        let activeModel;
+
+        window.addEventListener('load', () => {
+            
+            marker.addEventListener('markerFound', () => {
+                document.querySelector('.status').classList.add('found');
+                document.querySelector('.distance-container').classList.add('found');
+                let cameraPosition = camera.object3D.position;
+                let markerPosition = marker.object3D.position;
+                let distance = cameraPosition.distanceTo(markerPosition)
+
+                check = setInterval(() => {
+                    cameraPosition = camera.object3D.position;
+                    markerPosition = marker.object3D.position;
+                    distance = cameraPosition.distanceTo(markerPosition)
+
+                    document.querySelector('.distance').innerText = distance.toFixed(2);
+                }, 100);
+            });
+
+            marker.addEventListener('markerLost', () => {
+                document.querySelector('.status').classList.remove('found');
+                document.querySelector('.distance-container').classList.remove('found');
+                clearInterval(check);
+            })
+          
+            document.getElementById('lightRange').addEventListener('change', (e) => {
+                const mesh = document.getElementById(getActiveID()).object3D.children[0].children[0];
+                mesh.material.color = new THREE.Color(0x111111 * parseInt(e.target.value))
+            })
+            
+            const modelButtons = document.querySelectorAll('.model-selector > button');
+
+            modelButtons.forEach((button) => {
+                button.addEventListener('click', () => {
+                    // Reset all buttons and set myself
+                    document.getElementById(getActiveID()).object3D.visible = false;
+                    modelButtons.forEach(btn => btn.classList.remove('selected'));
+                    button.classList.add('selected');
+                    document.getElementById(getActiveID()).object3D.visible = true;
+
+                });
+            });
+           
+        });
+
+        function getActiveID() {
+            //console.log(document.querySelector('.model-selector > button.selected').dataset.modelId);
+            return document.querySelector('.model-selector > button.selected').dataset.modelId;
+        }
+    </script>
+  </body>
+</html>
