@@ -132,10 +132,26 @@
         visible="false"
         ></a-entity>
         <a-entity
-        id="ensalada"
+        id="sushi"
         position="0 0 0"
-        scale="3 3 3"
-        gltf-model="./models/ensalada.gltf"
+        scale="2 2 2"
+        gltf-model="./models/Pescado.gltf"
+        emitevents="true"
+        visible="false"
+        ></a-entity>
+        <a-entity
+        id="sushi"
+        position="0 0 0"
+        scale="2 2 2"
+        gltf-model="./models/SUSHI.gltf"
+        emitevents="true"
+        visible="false"
+        ></a-entity>
+        <a-entity
+        id="postre"
+        position="0 0 0"
+        scale="2 2 2"
+        gltf-model="./models/Postre.gltf"
         emitevents="true"
         visible="false"
         ></a-entity>
@@ -146,7 +162,9 @@
     <div class="model-selector">
         <button class="selected" data-model-id="medialunas">Medialunas</button>
         <button data-model-id="asado">Asado</button>
-        <button data-model-id="ensalada">Ensalada</button>
+        <button data-model-id="sushi">Sushi</button>
+        <button data-model-id="pescado">Pescado</button>
+        <button data-model-id="postre">Postre</button>
     </div>
     <div class="info">
         <p>Estado del Marker: <span class="status"><span class="red">No detectado</span><span class="green">detectado</span></span></p>
