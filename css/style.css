@@ -1,0 +1,15 @@
+.navbar-custom {
+    background-color: #5ca8ff;
+}
+
+.ar-cta {
+    display: block;
+}
+
+.ar-cta > .bi {
+    font-size: 30px;
+}
+
+.card-body.py-0 {
+    padding-top: 5px !important;
+}
