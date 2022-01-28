@@ -132,7 +132,7 @@
         visible="false"
         ></a-entity>
         <a-entity
-        id="sushi"
+        id="pescado"
         position="0 0 0"
         scale="2 2 2"
         gltf-model="./models/Pescado.gltf"
@@ -159,7 +159,7 @@
       <a-entity camera></a-entity>
     </a-scene>
 
-    <div class="model-selector">
+    <div class="model-selector" style="display: none;">
         <button class="selected" data-model-id="medialunas">Medialunas</button>
         <button data-model-id="asado">Asado</button>
         <button data-model-id="sushi">Sushi</button>
@@ -210,6 +210,16 @@
             })
             
             const modelButtons = document.querySelectorAll('.model-selector > button');
+
+            const param = new URLSearchParams(window.location.search);
+
+            if (param.has('s')) {
+                const modelId = param.get('s');
+                document.getElementById(getActiveID()).object3D.visible = false;
+                document.querySelector('.model-selector > .selected').classList.remove('selected');
+                document.querySelector(`.model-selector > [data-model-id="${modelId}"]`).classList.add('selected');
+                document.getElementById(getActiveID()).object3D.visible = true;
+            }
 
             modelButtons.forEach((button) => {
                 button.addEventListener('click', () => {
