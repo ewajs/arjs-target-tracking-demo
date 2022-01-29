@@ -112,8 +112,19 @@
         });
   </script>
   <body style="margin : 0px; overflow: hidden;">
-    <a-scene embedded arjs>
-      <a-marker type="pattern" size="0.065" emitevents="true" url="./markers/NibbleMarker.patt">
+    <a-scene
+    vr-mode-ui="enabled: false;"
+    renderer="logarithmicDepthBuffer: true;"
+    embedded
+    arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;">
+      <a-nft  
+      type="nft"
+      url="./descriptors/Nibble"
+      smooth="true"
+      smoothCount="10"
+      smoothTolerance=".01"
+      smoothThreshold="5"
+      emitevents="true">
         <a-entity light="type: ambient; color: #FFF; intensity: 1">
         </a-entity>
         <a-entity
@@ -155,7 +166,7 @@
         emitevents="true"
         visible="false"
         ></a-entity>
-      </a-marker>
+      </a-nft>
       <a-entity camera></a-entity>
     </a-scene>
 
@@ -176,7 +187,7 @@
     <script>
         let markerFound = false; 
         const camera = document.querySelector('[camera]');
-        const marker = document.querySelector('a-marker');
+        const marker = document.querySelector('a-nft');
         let check;
         let activeModel;
 
