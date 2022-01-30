@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html>
     <style>
+        @font-face {
+            font-family: "PrintBV";
+            src: url(./fonts/PRINC.TTF) format("truetype");
+        }
+
+
         .light-panel {
             position: fixed;
             top: 0;
@@ -90,6 +96,49 @@
         .model-selector > button.selected {
             background-color: rgba(255, 255, 255, 0.4);;
         }
+
+
+        .help-marker {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: opacityAnimation 5s infinite;
+        }
+            
+        .help-marker > img {
+            filter: brightness(0) invert(1);
+            opacity: 0.2;
+            max-width: 30%;
+            max-height: 30%;
+        }
+
+        .help-marker > p {
+            color: white;
+            font-family: "PrintBV", sans-serif;
+            font-size: 30px;
+            
+        }
+
+        @keyframes opacityAnimation { 
+            0% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
     </style>
   <!-- <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script> -->
   <!-- we import arjs version without NFT but with marker + location based support -->
@@ -168,11 +217,15 @@
         <button data-model-id="pescado">Pescado</button>
         <button data-model-id="postre">Postre</button>
     </div>
-    <div class="info">
+    <div class="help-marker">
+            <img src="./images/BMarker.png" />
+            <p>Alineá el marcador</p>        
+    </div>
+    <div class="info" style="display: none;">
         <p>Estado del Marker: <span class="status"><span class="red">No detectado</span><span class="green">detectado</span></span></p>
         <p class="distance-container">Distancia al Marker: <span class="distance"></span> cm</p>
     </div>
-    <div class="light-panel">
+    <div class="light-panel" style="display: none;">
         <input type="range" name="light" id="lightRange" min="0" max="15" step="1" value="15">
     </div>
     <script>
@@ -185,6 +238,7 @@
         window.addEventListener('load', () => {
             
             marker.addEventListener('markerFound', () => {
+                document.querySelector('.help-marker').style.display = "none";
                 document.querySelector('.status').classList.add('found');
                 document.querySelector('.distance-container').classList.add('found');
                 let cameraPosition = camera.object3D.position;
@@ -201,6 +255,7 @@
             });
 
             marker.addEventListener('markerLost', () => {
+                document.querySelector('.help-marker').style.display = "flex";
                 document.querySelector('.status').classList.remove('found');
                 document.querySelector('.distance-container').classList.remove('found');
                 clearInterval(check);
