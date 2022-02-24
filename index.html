@@ -37,6 +37,10 @@
       animation: opacityAnimation 5s infinite;
     }
 
+    .help-marker.hide {
+      display: none;
+    }
+
     .help-marker > img {
       filter: brightness(0) invert(1);
       opacity: 0.5;
@@ -157,6 +161,7 @@
         activeModelElement;
       const camera = document.querySelector("[camera]");
       const marker = document.querySelector("a-marker");
+      const helpMarker = document.querySelector(".help-marker");
 
       const modelId = new URL(window.location.href).searchParams.get("id");
 
@@ -170,6 +175,7 @@
       window.addEventListener("load", () => {
         marker.addEventListener("markerFound", () => {
           console.log("Marker Found!");
+          helpMarker.classList.add("hide");
           check = setInterval(() => {
             cameraPosition = camera.object3D.position;
             markerPosition = marker.object3D.position;
@@ -180,6 +186,7 @@
 
         marker.addEventListener("markerLost", () => {
           console.log("Marker Lost!");
+          helpMarker.classList.remove("hide");
           clearInterval(check);
         });
       });
