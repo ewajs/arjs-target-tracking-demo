@@ -1,245 +1,188 @@
 <!DOCTYPE html>
 <html>
-    <style>
-        .light-panel {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            width: 100%;
-            height: 100px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .light-panel input {
-            width: 80%;
-        }
-        .info {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            width: 100vw;
-            height: 100px;
-            background-color: rgba(255, 255, 255, 0.7);
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            flex-direction: column;
-        }
-        .status {
-            text-transform: uppercase;
-            font-weight: bold;
-        }
-        .red {
-            color: red;
-        }
-        .green {
-            color: darkgreen;
-            display: none;
-        }
+  <style>
+    @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css");
 
-        .status.found .green {
-            display: unset;
-        }
+    @font-face {
+      font-family: "PrintBV";
+      src: url(./fonts/PRINC.TTF) format("truetype");
+    }
 
-        .status.found .red {
-            display: none;
-        }
-        .distance-container {
-            display: none;
-        }
-        .distance-container.found {
-            display: unset;
-        }
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1001;
+    }
 
-        .model-selector {
-            position: fixed;
-            bottom: 120px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            justify-content: center;
+    .back-button > a {
+      border: none;
+      background-color: transparent;
+      font-size: 40px;
+      font-weight: 700;
+      color: white;
+    }
 
-        }
+    .help-marker {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      animation: opacityAnimation 5s infinite;
+    }
 
-        .model-selector > button {
-            margin: 0;
-            padding: 10px;
-            background-color: transparent;
-            border: none;
-            border-left: 2px solid rgba(255, 255, 255, 0.9);
-            border-top: 2px solid rgba(255, 255, 255, 0.9);
-            border-bottom: 2px solid rgba(255, 255, 255, 0.9);
-            font-size: large;
-            color: rgba(255, 255, 255, 0.9);
-        }
+    .help-marker > img {
+      filter: brightness(0) invert(1);
+      opacity: 0.5;
+      max-width: 30%;
+      max-height: 30%;
+    }
 
-        .model-selector > button:first-child {
-            border-top-left-radius: 10px;
-            border-bottom-left-radius: 10px;
-        }
+    .help-marker > p {
+      color: white;
+      font-family: "PrintBV", sans-serif;
+      font-size: 30px;
+    }
 
-        .model-selector > button:last-child {
-            border-top-right-radius: 10px;
-            border-bottom-right-radius: 10px;
-            border-right: 2px solid rgba(255, 255, 255, 0.9);
-        }
+    @keyframes opacityAnimation {
+      0% {
+        opacity: 0;
+      }
 
-        .model-selector > button.selected {
-            background-color: rgba(255, 255, 255, 0.4);;
-        }
-    </style>
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+  </style>
   <!-- <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script> -->
   <!-- we import arjs version without NFT but with marker + location based support -->
   <!-- <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script> -->
   <script src="./vendor/aframe.min.js"></script>
   <script src="./vendor/aframe-ar.js"></script>
-  <script>
-         AFRAME.registerComponent('modify-materials', {
-            init: function () {
-                // Wait for model to load.
-                this.el.addEventListener('model-loaded', () => {
-                    // Grab the mesh / scene.
-                    console.log("Object loaded")
-                    const mesh = document.getElementById('object').object3D.children[0].children[0];
-                    let currentColor = 0xffffff;
-                    setInterval(() => {
-                        currentColor = currentColor === 0 ? 0xffffff : currentColor - 0x111111;
-                        mesh.material.color = new THREE.Color(currentColor);
-                    }, 2000);
-                });
-            }
-        });
-  </script>
-  <body style="margin : 0px; overflow: hidden;">
+  <body style="margin: 0px; overflow: hidden">
     <a-scene embedded arjs>
-      <a-marker preset="hiro" size="0.065" emitevents="true">
-        <a-entity light="type: ambient; color: #FFF; intensity: 1">
-        </a-entity>
-        <a-entity
-        id="medialunas"
-        position="0 0 0"
-        scale="3 3 3"
-        gltf-model="./models/MEDIALUNAS1.gltf"
+      <a-marker
+        type="pattern"
+        size="0.065"
         emitevents="true"
-        ></a-entity>
-        <a-entity
-        id="asado"
-        position="0 0 0"
-        scale="2 2 2"
-        gltf-model="./models/asado.glb"
-        emitevents="true"
-        visible="false"
-        ></a-entity>
-        <a-entity
-        id="pescado"
-        position="0 0 0"
-        scale="2 2 2"
-        gltf-model="./models/Pescado.gltf"
-        emitevents="true"
-        visible="false"
-        ></a-entity>
-        <a-entity
-        id="sushi"
-        position="0 0 0"
-        scale="2 2 2"
-        gltf-model="./models/SUSHI.gltf"
-        emitevents="true"
-        visible="false"
-        ></a-entity>
-        <a-entity
-        id="postre"
-        position="0 0 0"
-        scale="2 2 2"
-        gltf-model="./models/Postre.gltf"
-        emitevents="true"
-        visible="false"
-        ></a-entity>
+        url="./markers/BblMarker.patt"
+        id="marker"
+      >
+        <a-entity light="type: ambient; color: #FFF; intensity: 1"> </a-entity>
       </a-marker>
       <a-entity camera></a-entity>
     </a-scene>
+    <div class="help-marker">
+      <img src="./images/BblMarker.png" />
+      <p>Alineá el marcador</p>
+    </div>
 
-    <div class="model-selector" style="display: none;">
-        <button class="selected" data-model-id="medialunas">Medialunas</button>
-        <button data-model-id="asado">Asado</button>
-        <button data-model-id="sushi">Sushi</button>
-        <button data-model-id="pescado">Pescado</button>
-        <button data-model-id="postre">Postre</button>
+    <div class="back-button">
+      <a><i class="bi-chevron-left"></i></a>
     </div>
-    <div class="info">
-        <p>Estado del Marker: <span class="status"><span class="red">No detectado</span><span class="green">detectado</span></span></p>
-        <p class="distance-container">Distancia al Marker: <span class="distance"></span> cm</p>
-    </div>
-    <div class="light-panel">
-        <input type="range" name="light" id="lightRange" min="0" max="15" step="1" value="15">
-    </div>
+
     <script>
-        let markerFound = false; 
-        const camera = document.querySelector('[camera]');
-        const marker = document.querySelector('a-marker');
-        let check;
-        let activeModel;
+      // Behold, the backend
+      let dishes = [
+        {
+          id: "medialunas",
+          model: "./models/MEDIALUNAS1.gltf",
+          scale: { x: 8, y: 8, z: 8 },
+          menuLink: "https://nibble-frontend.vercel.app/item/1",
+        },
+        {
+          id: "asado",
+          model: "./models/asado.glb",
+          scale: { x: 5, y: 5, z: 5 },
+          menuLink: "https://nibble-frontend.vercel.app/item/2",
+        },
+        {
+          id: "pescado",
+          model: "./models/Pescado.gltf",
+          scale: { x: 5, y: 5, z: 5 },
+          menuLink: "https://nibble-frontend.vercel.app/item/3",
+        },
+        {
+          id: "sushi",
+          model: "./models/SUSHI.gltf",
+          scale: { x: 5, y: 5, z: 5 },
+          menuLink: "https://nibble-frontend.vercel.app/item/4",
+        },
+        {
+          id: "postre",
+          model: "./models/Postre.gltf",
+          scale: { x: 5, y: 5, z: 5 },
+          menuLink: "https://nibble-frontend.vercel.app/item/5",
+        },
+      ];
 
-        window.addEventListener('load', () => {
-            
-            marker.addEventListener('markerFound', () => {
-                document.querySelector('.status').classList.add('found');
-                document.querySelector('.distance-container').classList.add('found');
-                let cameraPosition = camera.object3D.position;
-                let markerPosition = marker.object3D.position;
-                let distance = cameraPosition.distanceTo(markerPosition)
+      // And the utility library
 
-                check = setInterval(() => {
-                    cameraPosition = camera.object3D.position;
-                    markerPosition = marker.object3D.position;
-                    distance = cameraPosition.distanceTo(markerPosition)
+      AFRAME.registerComponent("nibble-init", {
+        schema: { type: "string" },
 
-                    document.querySelector('.distance').innerText = distance.toFixed(2);
-                }, 100);
-            });
+        init: function () {
+          console.log("Model loaded!");
+          let data = JSON.parse(this.data);
+          this.el.setAttribute("scale", data.scale);
+          this.el.setAttribute("position", data.position);
+          this.el.setAttribute("emitevents", true);
+        },
+      });
 
-            marker.addEventListener('markerLost', () => {
-                document.querySelector('.status').classList.remove('found');
-                document.querySelector('.distance-container').classList.remove('found');
-                clearInterval(check);
-            })
-          
-            document.getElementById('lightRange').addEventListener('change', (e) => {
-                const mesh = document.getElementById(getActiveID()).object3D.children[0].children[0];
-                mesh.material.color = new THREE.Color(0x111111 * parseInt(e.target.value))
-            })
-            
-            const modelButtons = document.querySelectorAll('.model-selector > button');
+      function addModelElement({ id, model, scale }) {
+        const el = document.createElement("a-entity");
+        el.setAttribute("id", id);
+        el.setAttribute("gltf-model", model);
+        el.setAttribute(
+          "nibble-init",
+          JSON.stringify({ scale, position: { x: 0, y: 0, z: 0 } })
+        );
+        activeModelElement = el;
+        marker.appendChild(el);
+      }
 
-            const param = new URLSearchParams(window.location.search);
+      let markerFound = false,
+        check,
+        activeModelElement;
+      const camera = document.querySelector("[camera]");
+      const marker = document.querySelector("a-marker");
 
-            if (param.has('s')) {
-                const modelId = param.get('s');
-                document.getElementById(getActiveID()).object3D.visible = false;
-                document.querySelector('.model-selector > .selected').classList.remove('selected');
-                document.querySelector(`.model-selector > [data-model-id="${modelId}"]`).classList.add('selected');
-                document.getElementById(getActiveID()).object3D.visible = true;
-            }
+      const modelId = new URL(window.location.href).searchParams.get("id");
 
-            modelButtons.forEach((button) => {
-                button.addEventListener('click', () => {
-                    // Reset all buttons and set myself
-                    document.getElementById(getActiveID()).object3D.visible = false;
-                    modelButtons.forEach(btn => btn.classList.remove('selected'));
-                    button.classList.add('selected');
-                    document.getElementById(getActiveID()).object3D.visible = true;
+      if (modelId === null) throw "No model specified.";
 
-                });
-            });
-           
+      const dish = dishes.filter((d) => d.id === modelId)[0];
+      document.querySelector(".back-button > a").href = dish.menuLink;
+
+      addModelElement(dish);
+
+      window.addEventListener("load", () => {
+        marker.addEventListener("markerFound", () => {
+          console.log("Marker Found!");
+          check = setInterval(() => {
+            cameraPosition = camera.object3D.position;
+            markerPosition = marker.object3D.position;
+            distance = cameraPosition.distanceTo(markerPosition);
+            console.log("Distance: " + distance.toFixed(2));
+          }, 1000);
         });
 
-        function getActiveID() {
-            //console.log(document.querySelector('.model-selector > button.selected').dataset.modelId);
-            return document.querySelector('.model-selector > button.selected').dataset.modelId;
-        }
+        marker.addEventListener("markerLost", () => {
+          console.log("Marker Lost!");
+          clearInterval(check);
+        });
+      });
     </script>
   </body>
 </html>

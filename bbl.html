@@ -96,67 +96,11 @@
   <!-- <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script> -->
   <script src="./vendor/aframe.min.js"></script>
   <script src="./vendor/aframe-ar.js"></script>
-  <script>
-         AFRAME.registerComponent('modify-materials', {
-            init: function () {
-                // Wait for model to load.
-                this.el.addEventListener('model-loaded', () => {
-                    // Grab the mesh / scene.
-                    console.log("Object loaded")
-                    const mesh = document.getElementById('object').object3D.children[0].children[0];
-                    let currentColor = 0xffffff;
-                    setInterval(() => {
-                        currentColor = currentColor === 0 ? 0xffffff : currentColor - 0x111111;
-                        mesh.material.color = new THREE.Color(currentColor);
-                    }, 2000);
-                });
-            }
-        });
-  </script>
   <body style="margin : 0px; overflow: hidden;">
     <a-scene embedded arjs>
-      <a-marker type="pattern" size="0.065" emitevents="true" url="./markers/BblMarker.patt">
+      <a-marker type="pattern" size="0.065" emitevents="true" url="./markers/BblMarker.patt" id="marker">
         <a-entity light="type: ambient; color: #FFF; intensity: 1">
         </a-entity>
-        <a-entity
-        id="medialunas"
-        position="0 0 0"
-        scale="3 3 3"
-        gltf-model="./models/MEDIALUNAS1.gltf"
-        emitevents="true"
-        ></a-entity>
-        <a-entity
-        id="asado"
-        position="0 0 0"
-        scale="2 2 2"
-        gltf-model="./models/asado.glb"
-        emitevents="true"
-        visible="false"
-        ></a-entity>
-        <a-entity
-        id="pescado"
-        position="0 0 0"
-        scale="2 2 2"
-        gltf-model="./models/Pescado.gltf"
-        emitevents="true"
-        visible="false"
-        ></a-entity>
-        <a-entity
-        id="sushi"
-        position="0 0 0"
-        scale="2 2 2"
-        gltf-model="./models/SUSHI.gltf"
-        emitevents="true"
-        visible="false"
-        ></a-entity>
-        <a-entity
-        id="postre"
-        position="0 0 0"
-        scale="2 2 2"
-        gltf-model="./models/Postre.gltf"
-        emitevents="true"
-        visible="false"
-        ></a-entity>
       </a-marker>
       <a-entity camera></a-entity>
     </a-scene>
@@ -176,6 +120,35 @@
         <input type="range" name="light" id="lightRange" min="0" max="15" step="1" value="15">
     </div>
     <script>
+        // Behold, the backend
+        let dishes = [
+            {
+                id: 'medialunas',
+                model: './models/MEDIALUNAS1.gltf',
+                scale: '2 2 2'
+            },
+            {
+                id: 'asado',
+                model: './models/asado.glb',
+                scale: '2 2 2'
+            },
+            {
+                id: 'pescado',
+                model: './models/Pescado.gltf',
+                scale: '2 2 2'
+            },
+            {
+                id: 'sushi',
+                model: './models/SUSHI.gltf',
+                scale: '2 2 2'
+            },
+            {
+                id: 'postre',
+                model: './models/Postre.gltf',
+                scale: '2 2 2'
+            },
+        ];
+
         let markerFound = false; 
         const camera = document.querySelector('[camera]');
         const marker = document.querySelector('a-marker');
